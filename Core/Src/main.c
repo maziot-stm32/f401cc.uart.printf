@@ -21,7 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -65,7 +65,7 @@ static void MX_USART1_UART_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+  uint32_t version = 0;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -89,6 +89,38 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
+  /* hardware info */
+  printf("\r\n\r\n");
+  printf("CHIP : STM32F401CCU6\r\n");
+  printf("ROM  : %ldKB\r\n", (*((uint32_t *)FLASHSIZE_BASE)) & 0xFFFF);
+  printf("RAM  : 64KB\r\n");
+  printf("DVE  : 0x%lX\r\n", HAL_GetDEVID());
+  printf("RVE  : 0x%lX\r\n", HAL_GetREVID());
+  printf("UID  : 0x%08lX%08lX%08lX\r\n", HAL_GetUIDw2(), HAL_GetUIDw1(), HAL_GetUIDw0());
+  printf("\r\n");
+
+  printf("FCLK : %lu\r\n", HAL_RCC_GetSysClockFreq());
+  printf("AHB  : %lu\r\n", HAL_RCC_GetHCLKFreq());
+  printf("APB1 : %lu\r\n", HAL_RCC_GetPCLK1Freq());
+  printf("APB2 : %lu\r\n", HAL_RCC_GetPCLK2Freq());
+
+  /* maziot logo */
+  printf(" __  __           _       _   \r\n");
+  printf("|  \\/  | __ _ ___(_) ___ | |_ \r\n");
+  printf("| |\\/| |/ _` |_  / |/ _ \\| __|\r\n");
+  printf("| |  | | (_| |/ /| | (_) | |_ \r\n");
+  printf("|_|  |_|\\__,_/___|_|\\___/ \\__|\r\n");
+  printf("\r\n");
+
+  /* software info */
+  version = HAL_GetHalVersion();
+  printf("HAL version  : v%d.%d.%d.%d\r\n", \
+         (uint8_t)(version >> 24) & 0xff, \
+         (uint8_t)(version >> 16) & 0xff, \
+         (uint8_t)(version >> 8) & 0xff, \
+         (uint8_t)version & 0xff);
+  printf("Build time   : %s %s\r\n", __DATE__, __TIME__);
+  printf("\r\n");
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -193,7 +225,11 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+int __io_putchar(int ch)
+{
+    HAL_UART_Transmit(&huart1, (uint8_t *) &ch, 1, HAL_MAX_DELAY);
+    return (ch);
+}
 /* USER CODE END 4 */
 
 /**
